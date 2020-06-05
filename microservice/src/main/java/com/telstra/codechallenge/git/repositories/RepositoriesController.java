@@ -21,9 +21,13 @@ public class RepositoriesController {
 	}
 
 	@RequestMapping(path = "/repositories", method = RequestMethod.GET)
-	public List<GitRepository> repositories(@RequestParam(defaultValue = "10") Integer limit) {
+	public List<GitRepository> repositories(@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer limit) {
 		if (limit < 0) {
-			throw new IllegalArgumentException("Limit should not be a negative");
+			throw new IllegalArgumentException("offset should not be a negative");
+		}
+		
+		if (pageNo < 0) {
+			throw new IllegalArgumentException("PageNo should not be a negative");
 		}
 
 		Search search = new Search();
@@ -32,6 +36,8 @@ public class RepositoriesController {
 		search.setSort("stars");
 		search.setOrder(Order.DESC);
 		search.setSince(Since.WEEKLY);
+		search.setPage(pageNo);
+		
 		/*
 		 * result validated against a web page
 		 * https://github.com/search?o=desc&q=stars&s=stars&type=Repositories
